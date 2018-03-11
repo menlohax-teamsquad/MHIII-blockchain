@@ -18,7 +18,7 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 {
 	private final Set <Integer> pressed = new HashSet <Integer>();
 	private int milliseconds = 0;
-	static Player p = new Player("player.json");
+	static Player p = new Player("player1.json");
 	static ArrayList <Zombie> zombies = new ArrayList<Zombie>();
 	boolean gameOver = false;
 	int kills = 0;
@@ -75,6 +75,7 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 
 	private void actionPerformed()
 	{
+		System.out.println(attackWait);
 		milliseconds += 1000/TICK_SPEED;
 		attackWait = max(0, (attackWait - (1000/TICK_SPEED)));
 //		System.out.println(attackWait);
@@ -106,7 +107,7 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 					zombies.remove(i);
 				}
 			}
-			attackWait = ATTACK_DELAY;
+			attackWait = ATTACK_DELAY/p.getInteligence();
 		}
 	}
 	public int max(int a, int b)
@@ -224,7 +225,7 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 		}
 		for (int code : pressed)
 		{
-			System.out.print((char) code);
+//			System.out.print((char) code);
 			switch ((char) code)
 			{
 			case 'W': p.moveUp(); break;

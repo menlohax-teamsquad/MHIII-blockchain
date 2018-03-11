@@ -179,7 +179,7 @@ public class Player implements Constants
 		int zx = z.getX();
 		int zy = z.getY();
 		double distance = Math.pow((x - zx) * (x - zx) + (y - zy) * (y - zy), 0.5);
-		if (distance <= (ZOMBIE_RADIUS + PLAYER_RADIUS) * 3)
+		if (distance <= (ZOMBIE_RADIUS + PLAYER_RADIUS) * (2 * (1+(double)dexterity/10)))
 		{
 			z.doDamage(attack);
 		}
@@ -241,5 +241,9 @@ public class Player implements Constants
 	public void takeDamage(int damage)
 	{
 		currentHealth -= damage;
+	}
+	public int getInteligence() 
+	{
+		return inteligence;
 	}
 }

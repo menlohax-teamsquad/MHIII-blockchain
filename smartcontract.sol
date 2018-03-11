@@ -183,8 +183,29 @@ contract Ownable {
 
 }
 
+/// @author CryptoKitties
+/// @title The external contract that is responsible for generating metadata,
+///  it has one function that will return the data as bytes.
+contract ERC721Metadata {
+    /// @dev Given a token Id, returns a byte array that is supposed to be converted into string.
+    function getMetadata(uint256 _tokenId, string) public view returns (bytes32[4] buffer, uint256 count) {
+        if (_tokenId == 1) {
+            buffer[0] = "Hello World! :D";
+            count = 15;
+        } else if (_tokenId == 2) {
+            buffer[0] = "I would definitely choose a medi";
+            buffer[1] = "um length string.";
+            count = 49;
+        } else if (_tokenId == 3) {
+            buffer[0] = "Lorem ipsum dolor sit amet, mi e";
+            buffer[1] = "st accumsan dapibus augue lorem,";
+            buffer[2] = " tristique vestibulum id, libero";
+            buffer[3] = " suscipit varius sapien aliquam.";
+            count = 128;
+        }
+    }
 
-
+}
 contract CharacterBase is Ownable{
     
     using SafeMath for uint256;
@@ -283,7 +304,36 @@ contract CharacterBase is Ownable{
 contract CharacterOwnership is CharacterBase, ERC721 {
     using SafeMath for uint256;
     mapping (uint => address) charApprovals;
-    
+
+    ERC721Metadata public erc721Metadata;
+
+    bytes4 constant InterfaceSignature_ERC165 =
+        bytes4(keccak256('supportsInterface(bytes4)'));
+
+    bytes4 constant InterfaceSignature_ERC721 =
+        bytes4(keccak256('name()')) ^
+        bytes4(keccak256('symbol()')) ^
+        bytes4(keccak256('totalSupply()')) ^
+        bytes4(keccak256('balanceOf(address)')) ^
+        bytes4(keccak256('ownerOf(uint256)')) ^
+        bytes4(keccak256('approve(address,uint256)')) ^
+        bytes4(keccak256('transfer(address,uint256)')) ^
+        bytes4(keccak256('transferFrom(address,address,uint256)')) ^
+        bytes4(keccak256('tokensOfOwner(address)')) ^
+        bytes4(keccak256('tokenMetadata(uint256,string)'));
+
+    /// @notice Introspection interface as per ERC-165 (https://github.com/ethereum/EIPs/issues/165).
+    ///  Returns true for any standardized interfaces implemented by this contract. We implement
+    ///  ERC-165 and ERC-721.
+    function supportsInterface(bytes4 _interfaceID) external view returns (bool)
+    {
+        return ((_interfaceID == InterfaceSignature_ERC165) || (_interfaceID == InterfaceSignature_ERC721));
+    }
+
+    function setMetadataAddress(address _contractAddress) public {
+        erc721Metadata = ERC721Metadata(_contractAddress);
+    }
+
     function _owns(address _requester, uint256 _tokenId) public view returns(bool){
         return(charToOwner[_tokenId] == _requester);
     }

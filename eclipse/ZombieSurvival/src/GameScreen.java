@@ -18,7 +18,7 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 {
 	private final Set <Integer> pressed = new HashSet <Integer>();
 	private int milliseconds = 0;
-	static Player p = new Player("player1.json");
+	static Player p = new Player("player2.json");
 	static ArrayList <Zombie> zombies = new ArrayList<Zombie>();
 	boolean gameOver = false;
 	int kills = 0;

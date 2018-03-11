@@ -1,0 +1,11 @@
+{
+    "hp": 400,
+    "str": 50,
+    "intel": 2,
+    "stam": 200,
+    "spd": 10,
+    "dex": 20,
+    "color1": 1,
+    "color2": 2,
+    "name": "player2"
+}

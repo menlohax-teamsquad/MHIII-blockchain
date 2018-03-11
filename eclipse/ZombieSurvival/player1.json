@@ -1,11 +1,11 @@
 {
     "hp": 100,
     "str": 5,
-    "intel": 0,
+    "intel": 1,
     "stam": 20,
     "spd": 3,
     "dex": 20,
-    "color1": 1,
+    "color1": 2,
     "color2": 2,
     "name": "player1"
 }

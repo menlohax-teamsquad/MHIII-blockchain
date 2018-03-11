@@ -1,6 +1,13 @@
+/*
+*Much of this code was taken from open source repositories across github and from other Ethereum-based projects. 
+*Shoutout to Cryptozombies and the Loom Network team for teaching us Solitidy and implementation of ERC721 tokens. 
+*
+*/
+
 pragma solidity ^0.4.18;
 
 /**
+ * Taken from OpenZeppelin, an open source library for developing secure smart contracts.  
  * @title Ownable
  * @dev The Ownable contract has an owner address, and provides basic authorization control
  * functions, this simplifies the implementation of "user permissions".
@@ -67,6 +74,7 @@ contract ERC721 {
 
 
 /**
+ * Taken from OpenZeppelin, an open source library for developing secure smart contracts. 
  * @title SafeMath
  * @dev Math operations with safety checks that throw on error
  */
@@ -207,6 +215,10 @@ contract ERC721Metadata {
     }
 
 }
+/**
+* Written by us. Establishes the character struct and key functions. 
+*
+*/
 contract CharacterBase is Ownable{
     
     using SafeMath for uint256;
@@ -321,16 +333,16 @@ contract CharacterBase is Ownable{
     }
 
 }
-
+/**
+*Establishes the standard transfer functions to conform to ERC-165 and (prototype) ERC-721 standards. 
+*/
 contract CharacterOwnership is CharacterBase, ERC721 {
     using SafeMath for uint256;
     mapping (uint => address) charApprovals;
 
     ERC721Metadata public erc721Metadata;
-
     bytes4 constant InterfaceSignature_ERC165 =
         bytes4(keccak256('supportsInterface(bytes4)'));
-
     bytes4 constant InterfaceSignature_ERC721 =
         bytes4(keccak256('name()')) ^
         bytes4(keccak256('symbol()')) ^
@@ -346,11 +358,13 @@ contract CharacterOwnership is CharacterBase, ERC721 {
     /// @notice Introspection interface as per ERC-165 (https://github.com/ethereum/EIPs/issues/165).
     ///  Returns true for any standardized interfaces implemented by this contract. We implement
     ///  ERC-165 and ERC-721.
+    /// @author CryptoKitties Team
     function supportsInterface(bytes4 _interfaceID) external view returns (bool)
     {
         return ((_interfaceID == InterfaceSignature_ERC165) || (_interfaceID == InterfaceSignature_ERC721));
     }
-
+    
+    
     function setMetadataAddress(address _contractAddress) public {
         erc721Metadata = ERC721Metadata(_contractAddress);
     }
@@ -427,6 +441,7 @@ contract CharacterOwnership is CharacterBase, ERC721 {
     /// @notice Returns a URI pointing to a metadata package for this token conforming to
     ///  ERC-721 (https://github.com/ethereum/EIPs/issues/721)
     /// @param _tokenId The ID number of the Kitty whose metadata should be returned.
+    //  @author CryptoKitties
     function tokenMetadata(uint256 _tokenId, string _preferredTransport) external view returns (string infoUrl) {
         require(erc721Metadata != address(0));
         bytes32[4] memory buffer;
@@ -664,6 +679,9 @@ contract ClockAuctionBase is CharacterOwnership{
     }
 }
 
+/**
+* Initial algorithm for combining two characters, the main way of increasing the character pool. 
+*/
 contract CharacterCombination is ClockAuctionBase{
   function combineChars(uint256 _parent1Id, uint256 _parent2Id) public {
     require (charToOwner[_parent1Id] == msg.sender && charToOwner[_parent2Id] == msg.sender);
@@ -671,7 +689,9 @@ contract CharacterCombination is ClockAuctionBase{
 
   }
 }
-
+/**
+*Initializes the smart contract and establishes a system for Gen 0 characters. 
+*/
 contract CharacterCore is CharacterCombination{
   uint16 GEN0CREATIONCAP = 50000;
   uint16 gen0CharCount = 0;

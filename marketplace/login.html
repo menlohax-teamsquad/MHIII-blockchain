@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<head>
+	<meta>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	</meta>
+<link rel = "stylesheet" type = "text/css" href = "main.css">
+</head>
+
+<body>
+
+	<!-- commented for the purpose of demo
+	<div id = "getMM">
+		<div class = "col-1-1 mobile-col-1-1 push-1-1">
+			<div class = "center"><p class= "head">Metamask is not installed!</p></div>
+		</div>
+		<a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en">
+		<img src="download-metamask-dark.png" alt="Download MetaMask">
+		</a>
+	</div>
+-->
+	<div id = "getMM">
+		<div class = "col-1-1 mobile-col-1-1 push-1-1">
+			<div class = "center"><p class= "head">Metamask is installed!</p></div>
+		</div>
+		<div class = "col-1-1 mobile-col-1-1 push-1-1">
+			<div class = "center"><p class= "faq">Wallet: 0xAD078400144DFF2c1c493055cE11bFA0926597c9</p></div>
+		</div>
+	</div>
+	<script>
+		var getMM = $("#getMM");
+		window.addEventListener('load', function() {
+
+		  // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+		  if (typeof web3 !== 'undefined') {
+
+		    // Use the browser's ethereum provider
+		    var provider = web3.currentProvider
+		    haveMM.show();
+
+		  } else {
+		    console.log('No web3? You should consider trying MetaMask!')
+		    getMM.show();
+		    haveMM.hide();
+		  }
+
+		})
+	</script>	
+</body>

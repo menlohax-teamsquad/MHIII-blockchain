@@ -226,7 +226,6 @@ contract CharacterBase is Ownable{
         //stats
         uint32 hp;
         uint32 maxHp;
-        uint32 exp;
         uint16 str;
         uint16 intel;
         uint16 stam;
@@ -239,6 +238,7 @@ contract CharacterBase is Ownable{
         uint16 maxDex;
         uint16 color1;
         uint16 color2;
+        uint16 level;
         string name;
     
     }
@@ -274,7 +274,6 @@ contract CharacterBase is Ownable{
                 generation: uint16(max(Characters[_parent1Id].generation, Characters[_parent2Id].generation) + 1),
                 hp: uint32(1),
                 maxHp: uint32(Characters[_parent1Id].hp + Characters[_parent2Id].hp),
-                exp: 0,
                 str: uint16(1),
                 intel: uint16(1),
                 stam: uint16(1),
@@ -287,6 +286,7 @@ contract CharacterBase is Ownable{
                 maxDex: uint16(Characters[_parent1Id].dex + Characters[_parent2Id].dex),
                 color1: uint16((Characters[_parent1Id].color1 + Characters[_parent2Id].color2) / 2),
                 color2: uint16((Characters[_parent1Id].color2 + Characters[_parent2Id].color1) / 2),
+                level: 1,
                 name: "name"
             });
             uint256 newCharId = Characters.push(_character) - 1;
@@ -295,6 +295,26 @@ contract CharacterBase is Ownable{
             ownerCharCount[_owner].add(1);
             return newCharId;
         }
+        
+    function levelUp(uint16 stat, uint16 boostAmount, uint256 charId){
+      if (stat == 1) {
+      Characters[charId].str++;
+      }
+      if (stat == 2) {
+      Characters[charId].intel++;
+      }
+      if (stat == 3) {
+      Characters[charId].stam++;
+      }
+      if (stat == 4) {
+      Characters[charId].spd++;
+      }
+      if (stat == 5) {
+      Characters[charId].dex++;
+      }
+      Characters[charId].hp = Characters[charId].hp + (uint32(block.blockhash(block.number-1))%5 + 1);    
+      Characters[charId].level++;
+    }
     
     function changeName(uint256 characterId, string name) public {
       Characters[characterId].name = name;
@@ -662,7 +682,6 @@ contract CharacterCore is CharacterCombination{
                 generation: 0,
                 hp: 1,
                 maxHp: uint32(block.blockhash(block.number-1))%10 + 1,
-                exp: 0,
                 str: 1,
                 intel: 1,
                 stam: 1,
@@ -675,6 +694,7 @@ contract CharacterCore is CharacterCombination{
                 maxDex: uint16(block.blockhash(block.number-1))%10 + 1,
                 color1: uint16(block.blockhash(block.number-1))%10 + 1,
                 color2: 14,
+                level: 1
                 name: "name"
             });
             uint256 newCharId = Characters.push(_character) - 1;

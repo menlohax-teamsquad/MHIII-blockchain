@@ -1,5 +1,44 @@
 pragma solidity ^0.4.18;
 
+/**
+ * @title Ownable
+ * @dev The Ownable contract has an owner address, and provides basic authorization control
+ * functions, this simplifies the implementation of "user permissions".
+ */
+contract Ownable {
+  address public owner;
+
+  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+  /**
+   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+   * account.
+   */
+  function Ownable() public {
+    owner = msg.sender;
+  }
+
+
+  /**
+   * @dev Throws if called by any account other than the owner.
+   */
+  modifier onlyOwner() {
+    require(msg.sender == owner);
+    _;
+  }
+
+
+  /**
+   * @dev Allows the current owner to transfer control of the contract to a newOwner.
+   * @param newOwner The address to transfer ownership to.
+   */
+  function transferOwnership(address newOwner) public onlyOwner {
+    require(newOwner != address(0));
+    OwnershipTransferred(owner, newOwner);
+    owner = newOwner;
+  }
+
+}
 
 /// @title Interface for contracts conforming to ERC-721: Non-Fungible Tokens
 /// @author Dieter Shirley <dete@axiomzen.co> (https://github.com/dete)
@@ -143,45 +182,7 @@ library SafeMath16 {
 }
 
 
-/**
- * @title Ownable
- * @dev The Ownable contract has an owner address, and provides basic authorization control
- * functions, this simplifies the implementation of "user permissions".
- */
-contract Ownable {
-  address public owner;
 
-  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-  /**
-   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
-   * account.
-   */
-  function Ownable() public {
-    owner = msg.sender;
-  }
-
-
-  /**
-   * @dev Throws if called by any account other than the owner.
-   */
-  modifier onlyOwner() {
-    require(msg.sender == owner);
-    _;
-  }
-
-
-  /**
-   * @dev Allows the current owner to transfer control of the contract to a newOwner.
-   * @param newOwner The address to transfer ownership to.
-   */
-  function transferOwnership(address newOwner) public onlyOwner {
-    require(newOwner != address(0));
-    OwnershipTransferred(owner, newOwner);
-    owner = newOwner;
-  }
-
-}
 
 /// @author CryptoKitties
 /// @title The external contract that is responsible for generating metadata,
@@ -363,10 +364,59 @@ contract CharacterOwnership is CharacterBase, ERC721 {
         _transfer(owner, msg.sender, _tokenId);
     }
     
+    /// @dev Adapted from memcpy() by @arachnid (Nick Johnson <arachnid@notdot.net>)
+    ///  This method is licenced under the Apache License.
+    ///  Ref: https://github.com/Arachnid/solidity-stringutils/blob/2f6ca9accb48ae14c66f1437ec50ed19a0616f78/strings.sol
+    function _memcpy(uint _dest, uint _src, uint _len) private view {
+        // Copy word-length chunks while possible
+        for(; _len >= 32; _len -= 32) {
+            assembly {
+                mstore(_dest, mload(_src))
+            }
+            _dest += 32;
+            _src += 32;
+        }
+
+        // Copy remaining bytes
+        uint256 mask = 256 ** (32 - _len) - 1;
+        assembly {
+            let srcpart := and(mload(_src), not(mask))
+            let destpart := and(mload(_dest), mask)
+            mstore(_dest, or(destpart, srcpart))
+        }
+    }
     
-    
-  
+    /// @dev Adapted from toString(slice) by @arachnid (Nick Johnson <arachnid@notdot.net>)
+    ///  This method is licenced under the Apache License.
+    ///  Ref: https://github.com/Arachnid/solidity-stringutils/blob/2f6ca9accb48ae14c66f1437ec50ed19a0616f78/strings.sol
+    function _toString(bytes32[4] _rawBytes, uint256 _stringLength) private view returns (string) {
+        var outputString = new string(_stringLength);
+        uint256 outputPtr;
+        uint256 bytesPtr;
+
+        assembly {
+            outputPtr := add(outputString, 32)
+            bytesPtr := _rawBytes
+        }
+
+        _memcpy(outputPtr, bytesPtr, _stringLength);
+
+        return outputString;
+    }
+
+    /// @notice Returns a URI pointing to a metadata package for this token conforming to
+    ///  ERC-721 (https://github.com/ethereum/EIPs/issues/721)
+    /// @param _tokenId The ID number of the Kitty whose metadata should be returned.
+    function tokenMetadata(uint256 _tokenId, string _preferredTransport) external view returns (string infoUrl) {
+        require(erc721Metadata != address(0));
+        bytes32[4] memory buffer;
+        uint256 count;
+        (buffer, count) = erc721Metadata.getMetadata(_tokenId, _preferredTransport);
+
+        return _toString(buffer, count);
+    }
 }
+    
 
 
 /// @title Auction Core

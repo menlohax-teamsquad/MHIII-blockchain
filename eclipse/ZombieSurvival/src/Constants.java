@@ -19,6 +19,6 @@ public interface Constants
 	final int ZOMBIE_DAMAGE = 2;
 	final int ZOMBIE_HEALTH = 10;
 	public static final int SCREEN_WIDTH = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-	public static final int SCREEN_HEIGHT = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 200;
+	public static final int SCREEN_HEIGHT = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 //	List<Color> colors = new ArrayList<Colors>(Arrays.asList(array))
 }

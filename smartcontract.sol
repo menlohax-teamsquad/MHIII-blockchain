@@ -329,7 +329,7 @@ contract CharacterCombination is CharacterOwnership{
 contract CharacterCore is CharacterCombination{
   uint16 GEN0CREATIONCAP = 50000;
   uint16 gen0CharCount = 0;
-  function _createGen0Character() private {
+  function _createGen0Character(owner) private {
     Character memory _character = Character({
                 parent1Id: 0,
                 parent2Id: 0,
@@ -352,6 +352,13 @@ contract CharacterCore is CharacterCombination{
                 name: "name"
             });
             uint256 newCharId = Characters.push(_character) - 1;
+            if (owner == address(0))
+            {
+              _transfer(0, msg.sender, newCharId);
+            }
+            else{
+            _transfer(0, _owner, newCharId);
+            }
   }
 
   function CharacterCore() public {
@@ -359,9 +366,9 @@ contract CharacterCore is CharacterCombination{
     gen0CharCount++;
   }
 
-  function gen0Creator() public {
+  function gen0Creator(address owner) public {
     require (gen0CharCount < GEN0CREATIONCAP);
-    _createGen0Character();
+    _createGen0Character(owner);
     gen0CharCount++;
   }
 

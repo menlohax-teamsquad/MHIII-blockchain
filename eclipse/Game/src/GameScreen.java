@@ -25,7 +25,7 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 	int attackWait = 0;
 	public static void main(String args[])
 	{
-		makeZombies(100);
+		makeZombies(10);
 		//data = p.readJSONData();
 		try
 		{
@@ -77,11 +77,12 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 	{
 		milliseconds += 1000/TICK_SPEED;
 		attackWait = max(0, (attackWait - (1000/TICK_SPEED)));
-		System.out.println(attackWait);
+//		System.out.println(attackWait);
 		//		System.out.println(p.getSprintState() + " " +  p.getDX() + " " + p.getSprintDX());
 		p.update();
+//		System.out.println(Math.max(1.0, (ZOMBIE_SPAWN - (milliseconds/1000)*(ZOMBIE_SPAWN_INCREASE))) + "__" + milliseconds);
 
-		if (((int) Math.ceil(Math.random() * ZOMBIE_SPAWN)) == 1)
+		if (((int) Math.ceil(Math.random() * Math.max(1.0, (ZOMBIE_SPAWN - (milliseconds/1000)*(ZOMBIE_SPAWN_INCREASE)))) == 1))
 		{
 			makeZombies(randomInt(ZOMBIE_CLUSTER - CLUSTER_VARIATION, ZOMBIE_CLUSTER + CLUSTER_VARIATION));
 		}
@@ -99,7 +100,7 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 			for (int i = 0; i < zombies.size(); i++)
 			{
 				p.attack(zombies.get(i));
-				if (zombies.get(i).getHealth() == 0)
+				if (zombies.get(i).getHealth() <= 0)
 				{
 					kills++;
 					zombies.remove(i);
@@ -110,7 +111,6 @@ public class GameScreen extends JFrame implements KeyListener, Constants
 	}
 	public int max(int a, int b)
 	{
-		System.out.println(a + " " + b);
 		if (a > b)
 		{
 			return a;

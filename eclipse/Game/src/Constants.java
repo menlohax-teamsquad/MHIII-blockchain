@@ -12,7 +12,8 @@ public interface Constants
 	final int TICK_SPEED = 20;
 	final int SPRINT_DELAY = 50;
 	final int REGEN_CHANCE = 25; //1 in x chance of happening
-	final int ZOMBIE_SPAWN = 0; //1 in x chance of happening
+	final int ZOMBIE_SPAWN = 20; //1 in x chance of happening
+	final double ZOMBIE_SPAWN_INCREASE = (double) 1/3; //smaller numbers mean faster increase
 	final int ZOMBIE_CLUSTER = 3;
 	final int CLUSTER_VARIATION = 2;
 	final int ZOMBIE_DAMAGE = 2;

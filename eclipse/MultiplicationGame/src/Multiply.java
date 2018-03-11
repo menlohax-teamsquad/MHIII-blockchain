@@ -86,7 +86,7 @@ public class Multiply extends JFrame implements KeyListener, Constants
 		g.setColor(Color.black);
 		g.drawRect(0, MENU_BAR - 1, SCREEN_WIDTH, TOP_OF_SCREEN - MENU_BAR);
 		drawCenteredString(g, "Question " + (currentQuestion - 1) + " out of " + NUM_PROBLEMS, new Rectangle(150, MENU_BAR - 10, 100, 100), new Font("Arial", Font.PLAIN, 35));
-		drawCenteredString(g, new DecimalFormat("#.##").format((double)(numCorrect)/Math.max(1, currentQuestion-2)*(100)) + "% correct", new Rectangle(1100, MENU_BAR - 10, 100, 100), new Font("Arial", Font.PLAIN, 35));
+		drawCenteredString(g, new DecimalFormat("#.##").format((double)(numCorrect)/Math.max(1,currentQuestion-2)*(100)) + "% correct", new Rectangle(1100, MENU_BAR - 10, 100, 100), new Font("Arial", Font.PLAIN, 35));
 	}
 	public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) 
 	{
@@ -126,7 +126,7 @@ public class Multiply extends JFrame implements KeyListener, Constants
 		{
 			input += e.getKeyChar();
 		}
-		System.out.println(e.getExtendedKeyCode());
+//		System.out.println(e.getExtendedKeyCode());
 		if (e.getExtendedKeyCode() == 8)
 		{
 			if (input.length() < 2)
@@ -144,7 +144,6 @@ public class Multiply extends JFrame implements KeyListener, Constants
 	{
 		if (currentQuestion > NUM_PROBLEMS)
 		{
-			System.out.println("da");
 			gameOver = true;
 		}
 		if (input == "")

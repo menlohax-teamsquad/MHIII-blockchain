@@ -1,4 +1,6 @@
 pragma solidity ^0.4.18;
+
+
 /// @title Interface for contracts conforming to ERC-721: Non-Fungible Tokens
 /// @author Dieter Shirley <dete@axiomzen.co> (https://github.com/dete)
 contract ERC721 {
@@ -191,6 +193,8 @@ contract CharacterBase is Ownable{
     
     
     event birth(address owner, uint256 newCharId, uint256 parent1Id, uint256 parent2Id);
+
+
     struct Character{
         //properties
         uint256 parent1Id;
@@ -200,6 +204,7 @@ contract CharacterBase is Ownable{
         //stats
         uint32 hp;
         uint32 maxHp;
+        uint32 exp;
         uint16 str;
         uint16 intel;
         uint16 stam;
@@ -246,7 +251,8 @@ contract CharacterBase is Ownable{
                 parent2Id: _parent2Id,
                 generation: uint16(max(Characters[_parent1Id].generation, Characters[_parent2Id].generation) + 1),
                 hp: uint32(1),
-                maxHP: uint32(Characters[_parent1Id].hp + Characters[_parent2Id].hp),
+                maxHp: uint32(Characters[_parent1Id].hp + Characters[_parent2Id].hp),
+                exp: 0,
                 str: uint16(1),
                 intel: uint16(1),
                 stam: uint16(1),
@@ -268,6 +274,9 @@ contract CharacterBase is Ownable{
             return newCharId;
         }
     
+    function changeName(uint256 characterId, string name) public {
+      Characters[characterId].name = name;
+    }
 
 }
 
@@ -275,7 +284,7 @@ contract CharacterOwnership is CharacterBase, ERC721 {
     using SafeMath for uint256;
     mapping (uint => address) charApprovals;
     
-    function _owns(address _requester, uint256 _tokenId) public returns(bool){
+    function _owns(address _requester, uint256 _tokenId) public view returns(bool){
         return(charToOwner[_tokenId] == _requester);
     }
     
@@ -310,11 +319,55 @@ contract CharacterOwnership is CharacterBase, ERC721 {
 }
 
 contract CharacterCombination is CharacterOwnership{
-  function combineChars(uint256 _parent1Id, uint256 _parent2Id){
+  function combineChars(uint256 _parent1Id, uint256 _parent2Id) public {
     require (charToOwner[_parent1Id] == msg.sender && charToOwner[_parent2Id] == msg.sender);
     uint256 newCharId = _createCharacter(_parent1Id, _parent2Id, msg.sender);
 
   }
 }
+
+contract CharacterCore is CharacterCombination{
+  uint16 GEN0CREATIONCAP = 50000;
+  uint16 gen0CharCount = 0;
+  function _createGen0Character() private {
+    Character memory _character = Character({
+                parent1Id: 0,
+                parent2Id: 0,
+                generation: 0,
+                hp: 1,
+                maxHp: uint32(block.blockhash(block.number-1))%10 + 1,
+                exp: 0,
+                str: 1,
+                intel: 1,
+                stam: 1,
+                spd: 1,
+                dex: 1,
+                maxStr: uint16(block.blockhash(block.number-1))%10 + 1,
+                maxIntel: uint16(block.blockhash(block.number-1))%10 + 1,
+                maxStam: uint16(block.blockhash(block.number-1))%10 + 1,
+                maxSpd: uint16(block.blockhash(block.number-1))%10 + 1,
+                maxDex: uint16(block.blockhash(block.number-1))%10 + 1,
+                color1: uint16(block.blockhash(block.number-1))%10 + 1,
+                color2: 14,
+                name: "name"
+            });
+            uint256 newCharId = Characters.push(_character) - 1;
+  }
+
+  function CharacterCore() public {
+    _createGen0Character();
+    gen0CharCount++;
+  }
+
+  function gen0Creator() public {
+    require (gen0CharCount < GEN0CREATIONCAP);
+    _createGen0Character();
+    gen0CharCount++;
+  }
+
+
+}
+
+
 
 
